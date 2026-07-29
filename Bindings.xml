@@ -1,0 +1,4 @@
+<Bindings>
+    <Binding name="CLICK HelloFishButton:LeftButton" header="HELLOFISH" category="HelloFish"/>
+    <Binding name="CLICK HelloFishButton:RightButton" category="HelloFish"/>
+</Bindings>

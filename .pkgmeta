@@ -1,0 +1,17 @@
+# BigWigs packager config. Used by the release-builder GitHub Action.
+
+package-as: HelloFish
+
+ignore:
+    - .gitignore
+    - .luacheckrc
+    - .pkgmeta
+    - .github
+    - DESIGN.md
+    - README.md
+    - LICENSE
+    - Tests.lua
+    # Project image for CurseForge; Icon.png is the shipped in-game icon.
+    - HelloFish.png
+
+# The changelog is generated from commit messages between release tags.

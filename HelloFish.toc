@@ -1,0 +1,16 @@
+## Interface: 11509
+## Title: HelloFish
+## Notes: A one-button fishing helper for WoW Classic Era.
+## Author: Drikk
+## Version: 0.1.0
+## SavedVariables: HelloFishDB
+## SavedVariablesPerCharacter: HelloFishCharDB
+## IconTexture: Interface\AddOns\HelloFish\Icon.png
+## Category: Professions
+## X-License: MIT
+
+Bindings.xml
+Core.lua
+Config.lua
+Fishing.lua
+Button.lua

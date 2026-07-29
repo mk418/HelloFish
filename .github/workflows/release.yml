@@ -1,0 +1,41 @@
+# Release workflow — fires when a v* tag is pushed.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag matches TOC version
+        run: |
+          toc_version=$(sed -n 's/^## Version:[[:space:]]*//p' HelloFish.toc | tr -d '[:space:]')
+          tag_version="${GITHUB_REF_NAME#v}"
+          if [ -z "$toc_version" ]; then
+            echo "::error::No '## Version:' header found in HelloFish.toc"
+            exit 1
+          fi
+          if [ "$toc_version" != "$tag_version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME expects $tag_version, but HelloFish.toc says $toc_version."
+            exit 1
+          fi
+          echo "TOC version $toc_version matches tag $GITHUB_REF_NAME."
+
+      - name: Package and release
+        uses: BigWigsMods/packager@v2
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
