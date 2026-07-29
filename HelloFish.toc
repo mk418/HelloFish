@@ -8,6 +8,7 @@
 ## IconTexture: Interface\AddOns\HelloFish\Icon.png
 ## Category: Professions
 ## X-License: MIT
+## X-Curse-Project-ID: 1631102
 
 Core.lua
 Config.lua
