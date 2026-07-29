@@ -117,7 +117,7 @@ reset()
 bags[0][1], bags[0][2] = item(6365), item(19970)
 expect("strongest pole wins", Fishing:State().itemID, 19970)
 unusable[19970] = true
-expect("unusable pole is skipped", Fishing:State().itemID, 6365)
+expect("carried pole remains equippable through secure item action", Fishing:State().itemID, 19970)
 
 reset()
 inventory[16] = item(6256)
@@ -190,10 +190,46 @@ expect("combat failure is reported", messages[#messages], "can't restore weapons
 
 local buttonAddon = { On = function() end, Fishing = Fishing }
 assert(loadfile(root .. "/Button.lua"))("HelloFish", buttonAddon)
-expect("equip macro is combat guarded", buttonAddon.Button.ActionMacro({ kind = "equip", itemID = 6256 }),
-  "#showtooltip item:6256\n/equipslot [nocombat] 16 item:6256")
+expect("default position sits left of HelloWarrior", buttonAddon.Button.DEFAULT_POSITION.x, -168)
+expect("default position aligns with HelloWarrior", buttonAddon.Button.DEFAULT_POSITION.y, -160)
+expect("equip is assigned to right-click item action",
+  buttonAddon.Button.RightItem({ kind = "equip", itemID = 6256 }), "item:6256")
+expect("equip state has no left-click action",
+  buttonAddon.Button.ActionMacro({ kind = "equip", itemID = 6256 }), "")
+expect("global middle-click uses physical button 3", buttonAddon.Button.MIDDLE_BINDING, "BUTTON3")
 expect("cast macro uses localized name", buttonAddon.Button.ActionMacro({ kind = "cast", name = "Pêcher" }),
   "#showtooltip Pêcher\n/cast [nocombat] Pêcher")
+
+local configAddon = {}
+assert(loadfile(root .. "/Config.lua"))("HelloFish", configAddon)
+expect("fishing button is shown by default", configAddon.Config.DEFAULTS.visible, true)
+
+reset()
+inventory[16] = item(6256)
+local clearedOwner, boundKey, boundFrame, boundButton
+function ClearOverrideBindings(owner) clearedOwner = owner end
+function SetOverrideBindingClick(_, _, key, frameName, mouseButton)
+  boundKey, boundFrame, boundButton = key, frameName, mouseButton
+end
+local function attributeFrame(name)
+  return {
+    attributes = {},
+    SetAttribute = function(self, key, value) self.attributes[key] = value end,
+    GetName = function() return name end,
+  }
+end
+buttonAddon.Button.bindingOwner = {}
+buttonAddon.Button.middleButton = attributeFrame("HelloFishMiddleCastButton")
+buttonAddon.Button.frame = attributeFrame("HelloFishButton")
+buttonAddon.Button:ApplyMiddleBinding()
+expect("middle binding owner is isolated", clearedOwner, buttonAddon.Button.bindingOwner)
+expect("pole enables global middle binding", buttonAddon.Button.middleBound, true)
+expect("middle binding key is BUTTON3", boundKey, "BUTTON3")
+expect("middle binding targets secure cast button", boundFrame, "HelloFishMiddleCastButton")
+expect("middle binding dispatches a secure left click", boundButton, "LeftButton")
+inventory[16] = item(1001)
+buttonAddon.Button:ApplyMiddleBinding()
+expect("removing pole releases middle binding", buttonAddon.Button.middleBound, false)
 
 if failures == 0 then
   print(("PASS — %d checks"):format(checks))

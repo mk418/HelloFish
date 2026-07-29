@@ -9,7 +9,6 @@
 ## Category: Professions
 ## X-License: MIT
 
-Bindings.xml
 Core.lua
 Config.lua
 Fishing.lua

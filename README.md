@@ -1,8 +1,8 @@
 # HelloFish
 
 A lean one-button fishing helper for WoW Classic Era. It equips your best pole,
-applies your strongest available lure, casts Fishing, and remembers the weapons
-it displaced.
+applies your strongest available lure, casts Fishing from a global middle-click,
+and remembers the weapons it displaced.
 
 > **Heads up** — this is a personal work in progress. I build and evolve it as I
 > play using it, so features land when I need them and design choices reflect my
@@ -10,16 +10,20 @@ it displaced.
 
 ## How it works
 
-The button always shows what the next left-click will do:
+Right-click enters or leaves fishing mode:
 
-1. Equip the strongest standard Era fishing pole in your bags.
-2. Apply the strongest usable lure when the pole has no temporary enchant.
-3. Cast Fishing.
+1. Without a pole equipped, it remembers both weapon slots and equips the
+   strongest standard Era fishing pole in your bags.
+2. With a pole equipped, it restores the remembered main-hand and off-hand.
+
+While fishing, left-click applies the strongest usable lure when needed and
+otherwise casts Fishing. Middle-click anywhere also casts Fishing while the
+pole is equipped; the global mouse binding is removed again when the pole is
+restored.
 
 Applying a lure is always a separate explicit click. When a lure is active, the
-button shows its approximate remaining time. Right-click restores the main-hand
-and off-hand items that were equipped before the pole, matching their full item
-links so differently enchanted copies are not confused.
+button shows its approximate remaining time. Restoration matches full item links
+so differently enchanted copies are not confused.
 
 Shift-drag the button while it is unlocked to move it. Both actions can also be
 bound under **Esc > Options > Keybindings > HelloFish**.

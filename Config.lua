@@ -8,6 +8,7 @@ local DEFAULTS = {
   locked = false,
   scale = 1,
 }
+Config.DEFAULTS = DEFAULTS
 
 local function applyDefaults(target, defaults)
   for key, value in pairs(defaults) do
@@ -28,6 +29,7 @@ function Config:SetVisible(visible)
   end
   HelloFishDB.visible = visible and true or false
   if addon.Button.frame then addon.Button.frame:SetShown(HelloFishDB.visible) end
+  addon:Print(HelloFishDB.visible and "button shown." or "button hidden.")
   self:SyncPanel()
 end
 
@@ -106,8 +108,9 @@ function Config:CreatePanel()
   local help = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
   help:SetPoint("TOPLEFT", reset, "BOTTOMLEFT", 0, -18)
   help:SetJustifyH("LEFT")
-  help:SetText("Left-click: equip pole, apply the strongest lure, then fish.\n" ..
-    "Right-click: restore the weapons displaced by the pole.\n" ..
+  help:SetText("Right-click: equip the best pole or restore your saved weapons.\n" ..
+    "Left-click: apply the strongest lure or cast Fishing.\n" ..
+    "With a pole equipped, middle-click anywhere to cast Fishing.\n" ..
     "Shift-drag while unlocked to move the button.\n\n" ..
     "Key bindings are under Esc > Options > Keybindings > HelloFish.")
 

@@ -4,8 +4,8 @@ A one-button fishing helper for World of Warcraft Classic Era.
 
 ## Design goals
 
-1. **One visible decision.** The button shows the exact action its next click
-   will take: pole, lure or cast.
+1. **One fishing-mode toggle.** Right-click equips the best pole or restores the
+   weapons it displaced; the primary icon shows pole, lure or cast state.
 2. **Every consumable needs a click.** The addon never spends a lure because an
    event fired or a timer expired.
 3. **Put combat gear back safely.** Equipping a two-handed pole displaces both
@@ -16,21 +16,26 @@ A one-button fishing helper for World of Warcraft Classic Era.
 ## State machine
 
 At login and after bag, equipment, skill, spellbook or enchant changes,
-`Fishing:State()` resolves the left-click action:
+`Fishing:State()` resolves the current state:
 
 ```text
 Fishing unknown ───────────────> disabled
-No pole equipped + pole owned ─> equip
-Pole equipped + no lure + lure > lure
-Pole equipped ─────────────────> cast
+No pole equipped + pole owned ─> right-click equips pole
+Pole equipped + no lure + lure > left-click applies lure
+Pole equipped ─────────────────> left/middle-click casts
 ```
 
-The button is a `SecureActionButtonTemplate`. Equip and lure actions use item-ID
-macros; cast uses the localized name returned for Fishing spell 7620. The known
-rank check covers Apprentice through Artisan because the Apprentice spell is no
-longer necessarily known at higher ranks. Every macro carries a `[nocombat]`
-condition. Lua updates secure attributes only out of combat and repeats any
-deferred refresh on `PLAYER_REGEN_ENABLED`.
+The button is a `SecureActionButtonTemplate`. Pole equip is a native secure item
+action; lure is an item-ID macro; cast uses the localized name returned for
+Fishing spell 7620. The known-rank check covers Apprentice through Artisan
+because the Apprentice spell is no longer necessarily known at higher ranks.
+Every macro carries a `[nocombat]` condition. Lua updates secure attributes only
+out of combat and repeats any deferred refresh on `PLAYER_REGEN_ENABLED`.
+
+While a pole is equipped, a dedicated invisible secure button is temporarily
+bound to physical `BUTTON3` with `SetOverrideBindingClick`. This provides the
+global middle-click cast without a full-screen mouse frame. Removing the pole
+clears only the binding owned by HelloFish.
 
 ## Item selection
 
@@ -63,9 +68,9 @@ missing items, a busy cursor or full bags preserve it for another attempt.
 ## Saved variables and UI
 
 `HelloFishDB` owns account-wide visibility, lock, scale and screen position.
-`HelloFishCharDB` owns only the active weapon snapshot. The button defaults to
-the lower center of the screen and supports Shift-drag while unlocked. The
-options canvas exposes visibility, locking, scale and position reset.
+`HelloFishCharDB` owns only the active weapon snapshot. The button defaults just
+left of HelloWarrior's default cluster and supports Shift-drag while unlocked.
+The options canvas exposes visibility, locking, scale and position reset.
 
 ## File structure
 

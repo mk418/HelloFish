@@ -67,7 +67,10 @@ end
 
 function Fishing:BestPole()
   for _, pole in ipairs(self.POLES) do
-    if itemCount(pole.id) > 0 and usable(pole.id) then return pole end
+    -- Equippable items do not consistently report as "usable" on every Era
+    -- client. Ownership is enough here: the secure item action performs the
+    -- actual equip and lets the client report any real requirement failure.
+    if itemCount(pole.id) > 0 then return pole end
   end
 end
 

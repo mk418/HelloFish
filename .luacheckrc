@@ -24,7 +24,8 @@ read_globals = {
     "GetSpellInfo", "IsSpellKnown", "IsInventoryItemLocked",
     "CursorHasItem", "SpellIsTargeting", "GetCursorInfo", "ClearCursor",
     "PickupInventoryItem", "GetTime", "InCombatLockdown",
-    "IsShiftKeyDown", "ReloadUI", "print",
+    "IsShiftKeyDown", "SetOverrideBindingClick", "ClearOverrideBindings",
+    "ReloadUI", "print",
 }
 
 files["Tests.lua"] = {
@@ -35,6 +36,6 @@ files["Tests.lua"] = {
         "GetWeaponEnchantInfo", "GetSpellInfo", "IsSpellKnown",
         "IsInventoryItemLocked", "CursorHasItem", "SpellIsTargeting",
         "GetCursorInfo", "ClearCursor", "PickupInventoryItem", "GetTime",
-        "InCombatLockdown",
+        "InCombatLockdown", "SetOverrideBindingClick", "ClearOverrideBindings",
     },
 }

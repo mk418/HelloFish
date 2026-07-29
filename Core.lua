@@ -5,7 +5,7 @@ addon.events = {}
 
 _G.BINDING_HEADER_HELLOFISH = "HelloFish"
 _G["BINDING_NAME_CLICK HelloFishButton:LeftButton"] = "Use fishing helper"
-_G["BINDING_NAME_CLICK HelloFishButton:RightButton"] = "Restore weapons"
+_G["BINDING_NAME_CLICK HelloFishButton:RightButton"] = "Equip pole / restore weapons"
 
 local frame = CreateFrame("Frame")
 addon.eventFrame = frame
@@ -44,6 +44,7 @@ addon:On("PLAYER_LOGIN", function()
   addon.Fishing:RequestItemData()
   addon.Button:Build()
   addon.Config:CreatePanel()
+  addon:Print("loaded — right-click the button to equip a pole; middle-click anywhere to fish.")
 end)
 
 local function trim(message)
