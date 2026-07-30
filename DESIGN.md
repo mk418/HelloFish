@@ -69,8 +69,9 @@ missing items, a busy cursor or full bags preserve it for another attempt.
 
 `HelloFishDB` owns account-wide visibility, lock, scale and screen position.
 `HelloFishCharDB` owns only the active weapon snapshot. The button defaults just
-left of HelloWarrior's default cluster and supports Shift-drag while unlocked.
-The options canvas exposes visibility, locking, scale and position reset.
+above the left edge of HelloUI's right-hand 4x3 action-bar block, matching its
+button size, and supports Shift-drag while unlocked. The options canvas exposes
+visibility, locking, scale and position reset.
 
 ## File structure
 

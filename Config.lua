@@ -28,7 +28,7 @@ function Config:SetVisible(visible)
     return
   end
   HelloFishDB.visible = visible and true or false
-  if addon.Button.frame then addon.Button.frame:SetShown(HelloFishDB.visible) end
+  if addon.Button.frame then addon.Button:ApplyVisibility() end
   addon:Print(HelloFishDB.visible and "button shown." or "button hidden.")
   self:SyncPanel()
 end

@@ -3,13 +3,15 @@ local _, addon = ...
 addon.Button = {}
 local Button = addon.Button
 
-local SIZE = 42
+Button.SIZE = 36
+Button.BORDER_SIZE = 66
 Button.MIDDLE_BINDING = "BUTTON3"
 Button.DEFAULT_POSITION = {
-  point = "CENTER",
-  relativePoint = "CENTER",
-  x = -168,
-  y = -160,
+  -- Aligned 2px above the leftmost button in HelloUI's right-hand 4x3 block.
+  point = "BOTTOM",
+  relativePoint = "BOTTOM",
+  x = 265,
+  y = 144,
 }
 
 local function actionMacro(state)
@@ -46,22 +48,19 @@ function Button:SavePosition()
   HelloFishDB.position = { point = point, relativePoint = relativePoint, x = x, y = y }
 end
 
+function Button:ShouldShow()
+  return HelloFishDB.visible and addon.Fishing:BestPole() ~= nil
+end
+
+function Button:ApplyVisibility()
+  if not self.frame or InCombatLockdown() then return end
+  self.frame:SetShown(self:ShouldShow())
+end
+
 function Button:UpdateVisual(state)
   local frame = self.frame
   frame.icon:SetTexture(state.icon or "Interface\\Icons\\Trade_Fishing")
   frame.icon:SetDesaturated(state.kind == "disabled")
-  frame.count:SetText(state.kind == "lure" and state.count and state.count > 1 and state.count or "")
-  if state.kind == "equip" then
-    frame.status:SetText("POLE")
-  elseif state.kind == "lure" then
-    frame.status:SetText("LURE")
-  elseif state.kind == "cast" and state.lureSeconds then
-    frame.status:SetText(math.max(1, math.ceil(state.lureSeconds / 60)) .. "m")
-  elseif state.kind == "disabled" then
-    frame.status:SetText("!")
-  else
-    frame.status:SetText("")
-  end
 end
 
 function Button:Refresh()
@@ -74,6 +73,7 @@ function Button:Refresh()
     return
   end
   self.pendingRefresh = nil
+  self:ApplyVisibility()
   local leftMacro = actionMacro(state)
   self.frame:SetAttribute("type1", leftMacro ~= "" and "macro" or nil)
   self.frame:SetAttribute("macrotext1", leftMacro ~= "" and leftMacro or nil)
@@ -129,7 +129,7 @@ end
 function Button:Build()
   if self.frame then return end
   local frame = CreateFrame("Button", "HelloFishButton", UIParent, "SecureActionButtonTemplate")
-  frame:SetSize(SIZE, SIZE)
+  frame:SetSize(self.SIZE, self.SIZE)
   frame:RegisterForClicks("AnyUp")
   frame:SetAttribute("useOnKeyDown", false)
   frame:SetMovable(true)
@@ -152,21 +152,14 @@ function Button:Build()
   self.middleButton = middle
 
   local icon = frame:CreateTexture(nil, "BACKGROUND")
-  icon:SetPoint("TOPLEFT", 3, -3)
-  icon:SetPoint("BOTTOMRIGHT", -3, 3)
+  icon:SetAllPoints(frame)
   icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
   frame.icon = icon
   local border = frame:CreateTexture(nil, "ARTWORK")
   border:SetTexture("Interface\\Buttons\\UI-Quickslot2")
-  border:SetSize(SIZE * 1.65, SIZE * 1.65)
-  border:SetPoint("CENTER")
-
-  local count = frame:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
-  count:SetPoint("BOTTOMRIGHT", -3, 3)
-  frame.count = count
-  local status = frame:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmallGray")
-  status:SetPoint("TOP", 0, -4)
-  frame.status = status
+  border:SetSize(self.BORDER_SIZE, self.BORDER_SIZE)
+  border:SetPoint("CENTER", frame, "CENTER", 0, -1)
+  border:SetAlpha(0.5)
 
   frame:SetScript("PreClick", function(_, mouseButton)
     if mouseButton == "RightButton" and not InCombatLockdown()
@@ -191,18 +184,8 @@ function Button:Build()
   self.frame = frame
   self:ApplyPosition()
   frame:SetScale(HelloFishDB.scale)
-  frame:SetShown(HelloFishDB.visible)
+  self:ApplyVisibility()
   self:Refresh()
-
-  local elapsed = 0
-  frame:SetScript("OnUpdate", function(_, delta)
-    elapsed = elapsed + delta
-    if elapsed < 1 then return end
-    elapsed = 0
-    if Button.state and Button.state.kind == "cast" and Button.state.lureSeconds then
-      Button:Refresh()
-    end
-  end)
 end
 
 local function refreshForUnit(unit)

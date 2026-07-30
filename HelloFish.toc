@@ -2,7 +2,7 @@
 ## Title: HelloFish
 ## Notes: A one-button fishing helper for WoW Classic Era.
 ## Author: Drikk
-## Version: 0.1.0
+## Version: 0.1.1
 ## SavedVariables: HelloFishDB
 ## SavedVariablesPerCharacter: HelloFishCharDB
 ## IconTexture: Interface\AddOns\HelloFish\Icon.png

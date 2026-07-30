@@ -190,8 +190,15 @@ expect("combat failure is reported", messages[#messages], "can't restore weapons
 
 local buttonAddon = { On = function() end, Fishing = Fishing }
 assert(loadfile(root .. "/Button.lua"))("HelloFish", buttonAddon)
-expect("default position sits left of HelloWarrior", buttonAddon.Button.DEFAULT_POSITION.x, -168)
-expect("default position aligns with HelloWarrior", buttonAddon.Button.DEFAULT_POSITION.y, -160)
+expect("default position uses a bottom anchor", buttonAddon.Button.DEFAULT_POSITION.point, "BOTTOM")
+expect("default position uses a matching relative anchor",
+  buttonAddon.Button.DEFAULT_POSITION.relativePoint, "BOTTOM")
+expect("button matches HelloUI's action-button size", buttonAddon.Button.SIZE, 36)
+expect("button matches HelloUI's action-button border size", buttonAddon.Button.BORDER_SIZE, 66)
+expect("default position aligns with HelloUI's leftmost right-block button",
+  buttonAddon.Button.DEFAULT_POSITION.x, 265)
+expect("default position sits above HelloUI's right block",
+  buttonAddon.Button.DEFAULT_POSITION.y, 144)
 expect("equip is assigned to right-click item action",
   buttonAddon.Button.RightItem({ kind = "equip", itemID = 6256 }), "item:6256")
 expect("equip state has no left-click action",
@@ -199,6 +206,21 @@ expect("equip state has no left-click action",
 expect("global middle-click uses physical button 3", buttonAddon.Button.MIDDLE_BINDING, "BUTTON3")
 expect("cast macro uses localized name", buttonAddon.Button.ActionMacro({ kind = "cast", name = "Pêcher" }),
   "#showtooltip Pêcher\n/cast [nocombat] Pêcher")
+
+HelloFishDB = { visible = true }
+reset()
+local buttonShown
+buttonAddon.Button.frame = {
+  SetShown = function(_, shown) buttonShown = shown end,
+}
+buttonAddon.Button:ApplyVisibility()
+expect("button is hidden without a fishing pole", buttonShown, false)
+bags[0][1] = item(6256)
+buttonAddon.Button:ApplyVisibility()
+expect("button is shown with a carried fishing pole", buttonShown, true)
+HelloFishDB.visible = false
+buttonAddon.Button:ApplyVisibility()
+expect("visibility preference still hides the button", buttonShown, false)
 
 local configAddon = {}
 assert(loadfile(root .. "/Config.lua"))("HelloFish", configAddon)
